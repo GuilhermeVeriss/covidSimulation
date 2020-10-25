@@ -23,9 +23,9 @@ def jpg_matrix(img):
 lis = []
 
 
-def select(a, b):
+def select(posxy):
     # lis.append(pos)
-    print((a, b))
+    print(posxy)
 
 
 root = Tk()
@@ -68,6 +68,12 @@ btErase.pack(side=LEFT)
 pixels = deepcopy(testMatrix)
 
 
+class Pixel:
+    def __init__(self, num, pos):
+        self.bt = Button(drawSpace, width=0, height=1, bd=0, font="Arial, 5", text=str(num), command=lambda:select(pos))
+        self.bt.grid(row=pos[0]+1, column=pos[1]+1)
+
+
 # GERA O DESENHO
 for r in range(len(testMatrix)):
     for c in range(len(testMatrix[r])):
@@ -76,12 +82,7 @@ for r in range(len(testMatrix)):
             lbNumber.grid(row=r+1, column=c+1)
             lbNumber["bg"] = "black"
         else:
-            pixels[r][c] = Button(drawSpace, width=0, height=1, bd=0, font="Arial, 5", text=str(testMatrix[r][c]))
-            pixels[r][c].grid(row=r+1, column=c+1)
-            # BUG
-            pixels[r][c].configure(command=lambda: select()) # BUG
-
+            bt1 = Pixel(testMatrix[r][c], (r, c))
 
 root.mainloop()
-
 

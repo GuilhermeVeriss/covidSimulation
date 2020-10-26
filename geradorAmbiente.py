@@ -25,6 +25,7 @@ selectedPixels = []
 selecting = False
 selectTool = False
 eraseTool = False
+rectTool = False
 
 regions = {}
 
@@ -44,7 +45,7 @@ def select_or_erase(pos_pixel):
         if selectTool:
             if pos_pixel not in selectedPixels:
                 selectedPixels.append(pos_pixel)
-                btPixels[pos_pixel[0]][pos_pixel[1]].change_color("#FE2E2E")
+                btPixels[pos_pixel[0]][pos_pixel[1]].change_color("#FA5858")
         if eraseTool:
             if pos_pixel in selectedPixels:
                 selectedPixels.remove(pos_pixel)
@@ -54,20 +55,59 @@ def select_or_erase(pos_pixel):
 def activate_selection():
     global selectTool
     global eraseTool
-    eraseTool = False
-    selectTool = True
+    global rectTool
+    global btSelect
+    global btErase
+    global btSelectRect
+    if selecting:
+        eraseTool = False
+        btErase.configure(background="#F2F2F2")
+        selectTool = True
+        btSelect.configure(background="#585858")
+        rectTool = False
+        btSelectRect.configure(background="#F2F2F2")
 
 
 def activate_erasing():
     global selectTool
     global eraseTool
-    selectTool = False
-    eraseTool = True
+    global rectTool
+    global btSelect
+    global btErase
+    global btSelectRect
+    if selecting:
+        selectTool = False
+        btSelect.configure(background="#F2F2F2")
+        eraseTool = True
+        btErase.configure(background="#585858")
+        rectTool = False
+        btSelectRect.configure(background="#F2F2F2")
+
+
+def activate_rectangle():
+    global selectTool
+    global eraseTool
+    global rectTool
+    global btSelect
+    global btErase
+    global btSelectRect
+    if selecting:
+        rectTool = True
+        btSelectRect.configure(background="#585858")
+        selectTool = False
+        btSelect.configure(background="#F2F2F2")
+        eraseTool = False
+        btErase.configure(background="#F2F2F2")
+
 
 
 def finish_selection():
     global selecting
     global selectedPixels
+    global btSelect
+    global btErase
+    btSelect.configure(background="#F2F2F2")
+    btErase.configure(background="#F2F2F2")
     if selecting and len(selectedPixels) != 0:
         selecting = False
         new_region(selectedPixels)
@@ -80,10 +120,10 @@ def new_region(new_pixels):
     num = len(regions) + 2
     nome = simpledialog.askstring("Nome da Região", "Insira o nome da região")
     regions[nome] = num
-    print(regions)
     for p in new_pixels:
         testMatrix[p[0]][p[1]] = num
         btPixels[p[0]][p[1]].active = False
+        btPixels[p[0]][p[1]].change_color("#2E64FE")
 
 
 class Pixel:
@@ -129,6 +169,9 @@ btSelect.pack(side=RIGHT)
 # Apagar
 btErase = Button(selectionTools, width=10, text="Apagar", command=activate_erasing)
 btErase.pack(side=LEFT)
+# Selecionar Retângulo
+btSelectRect = Button(selectionTools, width=10, text="Retângulo", command=activate_rectangle)
+btSelectRect.pack(side=BOTTOM)
 
 # -----------------------------------------------------------------------
 
@@ -145,5 +188,4 @@ for r in range(len(testMatrix)):
             btPixels[r][c] = Pixel(testMatrix[r][c], (r, c))
 
 root.mainloop()
-
 

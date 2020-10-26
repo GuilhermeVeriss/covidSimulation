@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import simpledialog
 from PIL import Image
 from numpy import array
 from numpy.linalg import norm
@@ -73,33 +74,13 @@ def finish_selection():
         selectedPixels = []
 
 
-def get_region_name():
-    name = None
-
-    def get_name():
-        nonlocal name
-        nonlocal input_name_frame
-        name = name_box.get()
-        input_name_frame.destroy()
-
-    input_name_frame = Toplevel(root, padx=50, pady=30)
-    input_name_frame.title("Nome")
-
-    name_box = Entry(input_name_frame)
-    name_box.pack()
-
-    finish_bt = Button(input_name_frame, text="Ok", command=get_name)
-    finish_bt.pack()
-    input_name_frame.mainloop()
-
-    return name
-
-
 def new_region(new_pixels):
+    global regions
     global btPixels
-
     num = len(regions) + 2
-    regions[get_region_name()] = num
+    nome = simpledialog.askstring("Nome da Região", "Insira o nome da região")
+    regions[nome] = num
+    print(regions)
     for p in new_pixels:
         testMatrix[p[0]][p[1]] = num
         btPixels[p[0]][p[1]].active = False
@@ -165,4 +146,4 @@ for r in range(len(testMatrix)):
 
 root.mainloop()
 
-print(regions)
+

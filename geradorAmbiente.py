@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import simpledialog
+from tkinter import messagebox
 from PIL import Image
 from numpy import array
 from numpy.linalg import norm
@@ -27,6 +28,8 @@ selectTool = False
 eraseTool = False
 rectTool = False
 
+pointsForSelection = []
+
 regions = {}
 
 imgTestjpg = Image.open("imagens/desenhoTestePlanta.jpg").convert('L')
@@ -50,15 +53,43 @@ def select_or_erase(pos_pixel):
             if pos_pixel in selectedPixels:
                 selectedPixels.remove(pos_pixel)
                 btPixels[pos_pixel[0]][pos_pixel[1]].change_color("#F2F2F2")
+        if rectTool:
+            global pointsForSelection
+
+            if len(pointsForSelection) == 1:
+                ans = messagebox.askquestion("Confirmar", "Deseja selecionar essa região?")
+                if ans == "yes":
+                    btPixels[pos_pixel[0]][pos_pixel[1]].change_color("#58FA58")
+                    pointsForSelection.append(pos_pixel)
+                    select_all_pixels(pointsForSelection)
+                    pointsForSelection = []
+                else:
+                    point = pointsForSelection[0]
+                    btPixels[point[0]][point[1]].change_color("#F2F2F2")
+                    pointsForSelection = []
+            elif len(pointsForSelection) == 0:
+                btPixels[pos_pixel[0]][pos_pixel[1]].change_color("#58FA58")
+                pointsForSelection.append(pos_pixel)
+
+
+def select_all_pixels(points):
+    global selectTool, rectTool
+    selectTool = True
+    rectTool = False
+
+    x1, y1 = points[0]
+    x2, y2 = points[1]
+    for line in range(x1, x2+1):
+        for column in range(y1, y2+1):
+            select_or_erase((line, column))
+
+    selectTool = False
+    rectTool = True
 
 
 def activate_selection():
-    global selectTool
-    global eraseTool
-    global rectTool
-    global btSelect
-    global btErase
-    global btSelectRect
+    global selectTool, eraseTool, rectTool, btSelect, btErase, btSelectRect
+
     if selecting:
         eraseTool = False
         btErase.configure(background="#F2F2F2")
@@ -69,12 +100,8 @@ def activate_selection():
 
 
 def activate_erasing():
-    global selectTool
-    global eraseTool
-    global rectTool
-    global btSelect
-    global btErase
-    global btSelectRect
+    global selectTool, eraseTool, rectTool, btSelect, btErase, btSelectRect
+
     if selecting:
         selectTool = False
         btSelect.configure(background="#F2F2F2")
@@ -85,12 +112,8 @@ def activate_erasing():
 
 
 def activate_rectangle():
-    global selectTool
-    global eraseTool
-    global rectTool
-    global btSelect
-    global btErase
-    global btSelectRect
+    global selectTool, eraseTool, rectTool, btSelect, btErase, btSelectRect
+
     if selecting:
         rectTool = True
         btSelectRect.configure(background="#585858")
@@ -100,15 +123,18 @@ def activate_rectangle():
         btErase.configure(background="#F2F2F2")
 
 
-
 def finish_selection():
-    global selecting
-    global selectedPixels
-    global btSelect
-    global btErase
+    global selecting, selectedPixels
+    global btSelect, btSelectRect, btErase, selectTool, eraseTool, rectTool
+
     btSelect.configure(background="#F2F2F2")
     btErase.configure(background="#F2F2F2")
+    btSelectRect.configure(background="#F2F2F2")
+
     if selecting and len(selectedPixels) != 0:
+        selectTool = False
+        rectTool = False
+        eraseTool = False
         selecting = False
         new_region(selectedPixels)
         selectedPixels = []
@@ -189,3 +215,4 @@ for r in range(len(testMatrix)):
 
 root.mainloop()
 
+print(regions)

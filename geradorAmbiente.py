@@ -5,6 +5,7 @@ from PIL import Image
 from numpy import array
 from numpy.linalg import norm
 from copy import deepcopy
+from pickle import dump
 
 
 def jpg_matrix(img):
@@ -32,8 +33,9 @@ pointsForSelection = []
 
 regions = {}
 
-imgTestjpg = Image.open("imagens/desenhoTestePlanta.jpg").convert('L')
-testMatrix = jpg_matrix(imgTestjpg)
+imgName = "imagens/desenhoTestePlanta.jpg"
+imgTestjpg = Image.open(imgName).convert('L')
+imgMatrix = jpg_matrix(imgTestjpg)
 
 
 def start_selecting():
@@ -44,6 +46,7 @@ def start_selecting():
 
 def select_or_erase(pos_pixel):
     global btPixels
+
     if selecting and btPixels[pos_pixel[0]][pos_pixel[1]].active:
         if selectTool:
             if pos_pixel not in selectedPixels:
@@ -147,7 +150,7 @@ def new_region(new_pixels):
     nome = simpledialog.askstring("Nome da Região", "Insira o nome da região")
     regions[nome] = num
     for p in new_pixels:
-        testMatrix[p[0]][p[1]] = num
+        imgMatrix[p[0]][p[1]] = num
         btPixels[p[0]][p[1]].active = False
         btPixels[p[0]][p[1]].change_color("#2E64FE")
 
@@ -201,18 +204,23 @@ btSelectRect.pack(side=BOTTOM)
 
 # -----------------------------------------------------------------------
 
-btPixels = deepcopy(testMatrix)
+btPixels = deepcopy(imgMatrix)
 
 # GERA O DESENHO
-for r in range(len(testMatrix)):
-    for c in range(len(testMatrix[r])):
-        if testMatrix[r][c] == 0:
+for r in range(len(imgMatrix)):
+    for c in range(len(imgMatrix[r])):
+        if imgMatrix[r][c] == 0:
             lbNumber = Label(drawSpace, width=0, height=1, bd=0, font="Arial, 5", text=str(0))
             lbNumber.grid(row=r+1, column=c+1)
             lbNumber["bg"] = "black"
         else:
-            btPixels[r][c] = Pixel(testMatrix[r][c], (r, c))
+            btPixels[r][c] = Pixel(imgMatrix[r][c], (r, c))
 
 root.mainloop()
 
-print(regions)
+
+env = {"regions": regions, "matrix": imgMatrix}
+
+fontText = open("ambiente.xml", "wb")
+dump(env, fontText)
+fontText.close()

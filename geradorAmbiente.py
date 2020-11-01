@@ -1,6 +1,5 @@
 from tkinter import *
-from tkinter import simpledialog
-from tkinter import messagebox
+from tkinter import simpledialog, messagebox, ttk
 from PIL import Image
 from numpy import array
 from numpy.linalg import norm
@@ -33,7 +32,7 @@ pointsForSelection = []
 
 regions = {}
 
-imgName = "imagens/desenhoTestePlanta.jpg"
+imgName = "imagens/planta_casa_teste.jpg"
 imgTestjpg = Image.open(imgName).convert('L')
 imgMatrix = jpg_matrix(imgTestjpg)
 
@@ -156,14 +155,13 @@ def new_region(new_pixels):
 
 
 class Pixel:
-    def __init__(self, num, pos):
-        self.bt = Button(drawSpace, width=0, height=1, bd=0, font="Arial, 5", text=str(num),
-                         command=lambda: select_or_erase(pos), bg="#F2F2F2")
-        self.bt.grid(row=pos[0]+1, column=pos[1]+1)
+    def __init__(self, num, pos, color):
+        self.color = color
+        self.pix = canvas.create_rectangle(*pos, pos[0]+1, pos[1]+1, fill=self.color, width=0)
         self.active = True
 
-    def change_color(self, color):
-        self.bt["bg"] = color
+    # def change_color(self, color):
+    #     self.bt["bg"] = color
 
 
 root = Tk()
@@ -174,6 +172,16 @@ root.configure(background="white")
 # DESENHO
 drawSpace = Frame(root, padx=20, pady=20)
 drawSpace.pack(side=LEFT)
+
+canvas = Canvas(drawSpace, width=len(imgMatrix), height=len(imgMatrix[0]))
+canvas.pack(side=LEFT)
+
+# scrollBar = ttk.Scrollbar(drawSpace, orient=VERTICAL, command=canvas.yview)
+# scrollBar.pack(side=RIGHT, fill=Y)
+#
+# canvas.configure(yscrollcommand=scrollBar.set)
+# canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
 
 # =========================================================================
 # OPÇÕES
@@ -210,11 +218,11 @@ btPixels = deepcopy(imgMatrix)
 for r in range(len(imgMatrix)):
     for c in range(len(imgMatrix[r])):
         if imgMatrix[r][c] == 0:
-            lbNumber = Label(drawSpace, width=0, height=1, bd=0, font="Arial, 5", text=str(0))
-            lbNumber.grid(row=r+1, column=c+1)
-            lbNumber["bg"] = "black"
+            Pixel(imgMatrix[r][c], (r, c), "black")
+            x = 2
         else:
-            btPixels[r][c] = Pixel(imgMatrix[r][c], (r, c))
+            btPixels[r][c] = Pixel(imgMatrix[r][c], (r, c), "white")
+            print(r)
 
 root.mainloop()
 

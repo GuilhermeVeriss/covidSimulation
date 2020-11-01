@@ -125,6 +125,10 @@ def activate_rectangle():
         btErase.configure(background="#F2F2F2")
 
 
+def click_event(event):
+    select_or_erase((event.x, event.y))
+
+
 def finish_selection():
     global selecting, selectedPixels
     global btSelect, btSelectRect, btErase, selectTool, eraseTool, rectTool
@@ -157,11 +161,18 @@ def new_region(new_pixels):
 class Pixel:
     def __init__(self, num, pos, color):
         self.color = color
+        self.num = num
         self.pix = canvas.create_rectangle(*pos, pos[0]+1, pos[1]+1, fill=self.color, width=0)
-        self.active = True
+        if num == 0:
+            self.active = False
+        elif num == 1:
+            self.active = True
 
-    # def change_color(self, color):
-    #     self.bt["bg"] = color
+        canvas.bind("<Button-1>", click_event)
+
+    def change_color(self, new_color):
+        self.color = new_color
+        canvas.itemconfig(self.pix, fill=self.color)
 
 
 root = Tk()
@@ -175,12 +186,6 @@ drawSpace.pack(side=LEFT)
 
 canvas = Canvas(drawSpace, width=len(imgMatrix), height=len(imgMatrix[0]))
 canvas.pack(side=LEFT)
-
-# scrollBar = ttk.Scrollbar(drawSpace, orient=VERTICAL, command=canvas.yview)
-# scrollBar.pack(side=RIGHT, fill=Y)
-#
-# canvas.configure(yscrollcommand=scrollBar.set)
-# canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
 
 # =========================================================================
@@ -218,8 +223,7 @@ btPixels = deepcopy(imgMatrix)
 for r in range(len(imgMatrix)):
     for c in range(len(imgMatrix[r])):
         if imgMatrix[r][c] == 0:
-            Pixel(imgMatrix[r][c], (r, c), "black")
-            x = 2
+            btPixels[r][c] = Pixel(imgMatrix[r][c], (r, c), "black")
         else:
             btPixels[r][c] = Pixel(imgMatrix[r][c], (r, c), "white")
             print(r)

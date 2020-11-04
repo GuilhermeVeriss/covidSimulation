@@ -1,19 +1,22 @@
 from pickle import load
 from tkinter import *
-from PIL import Image, ImageTk
 
 
 font = open("ambiente.xml", "rb")
-regions, matrixImg = load(font).values()
+regions, matrix = load(font).values()
 
-print(regions)
-for i in matrixImg:
-    print(i)
+matrix_w = len(matrix[0])
+matrix_h = len(matrix)
 
-# root = Tk()
+root = Tk()
+root.title("Ambiente da simulação")
 
-# img = ImageTk.PhotoImage(Image.open("imagens/desenhoTestePlanta.jpg"))
-# canvas = Canvas(root, width=img.width(), height=img.height())
-# canvas.create_image(0, 0, anchor=NW, image=img)
-# canvas.pack()
-# root.mainloop()
+canvas = Canvas(root, bg="white", width=matrix_w, height=matrix_h)
+canvas.pack()
+
+for r in range(matrix_h):
+    for c in range(matrix_w):
+        if matrix[r][c] == regions["parede"]:
+            canvas.create_rectangle(r, c, r+1, c+1, fill="black")
+
+root.mainloop()

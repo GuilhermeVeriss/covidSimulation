@@ -17,6 +17,6 @@ canvas.pack()
 for r in range(matrix_h):
     for c in range(matrix_w):
         if matrix[r][c] == regions["parede"]:
-            canvas.create_rectangle(r, c, r+1, c+1, fill="black")
+            canvas.create_rectangle(c, r, c+1, r+1, fill="black")
 
 root.mainloop()

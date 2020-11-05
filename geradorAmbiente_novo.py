@@ -14,11 +14,22 @@ def input_colors():
     global regions
     for hex_color in color_code:
         color_show.configure(bg=hex_color)
+
+        for r1 in range(len(imgArray)):
+            for c1 in range(len(imgArray[r])):
+                if matrix_res[r1][c1] == color_code[hex_color]:
+                    canvas.itemconfig(pixels[r1][c1], fill="white")
+
         while True:
             name = simpledialog.askstring("Inserir nome", "Insira o nome da região")
             if name:
                 regions[name] = color_code[hex_color]
                 break
+
+        for r1 in range(len(imgArray)):
+            for c1 in range(len(imgArray[r])):
+                if matrix_res[r1][c1] == color_code[hex_color]:
+                    canvas.itemconfig(pixels[r1][c1], fill=hex_color)
 
 
 imgName = "imagens/color_identifier.png"
@@ -31,6 +42,9 @@ imgArray = array(imgTestJpg)
 
 matrix_res = list(deepcopy(imgArray))
 matrix_res = list(map(lambda x: list(x), matrix_res))
+
+pixels = list(deepcopy(imgArray))
+pixels = list(map(lambda x: list(x), pixels))
 
 color_code = {}
 regions = {}
@@ -61,7 +75,7 @@ for r in range(len(imgArray)):
         if color not in color_code.keys():
             color_code[color] = len(color_code) + 1
         matrix_res[r][c] = color_code[color]
-        canvas.create_rectangle(r, c, r+1, c+1, fill=color, width=0)
+        pixels[r][c] = canvas.create_rectangle(r, c, r+1, c+1, fill=color, width=0)
 
 
 root.mainloop()

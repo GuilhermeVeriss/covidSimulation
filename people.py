@@ -1,5 +1,6 @@
 from data import *
 from numpy import array
+from numpy.linalg import norm
 from pickle import load
 
 
@@ -10,8 +11,8 @@ regions, matrix = load(font).values()
 def create_person(pos):
 
     person = {
-        "pos": pos,
-        "vel": [0, 0],
+        "pos": array(pos),
+        "vel": array([1, 0]),
         "size": .3,
         "place": ""
     }
@@ -33,12 +34,24 @@ def process(per):
 
     # Rotas
 
+    # ------------------------------------------------
     # Forças
 
+    f_forward = array([0, 0])
+
+    f_wall = array([0, 0])
+
+    f_person = array([0, 0])
+
+    f_all = f_forward + f_wall + f_person
+
+    # -------------------------------------------------
     # Nova velocidade
+    if norm(f_all) != 0:
+        per["vel"] = (v*(f_all/norm(f_all)) + per["vel"])
 
     # Nova posição
-    per["pos"] = list(array(per["pos"]) + array(per["vel"]))
+    per["pos"] = per["pos"] + per["vel"]
 
     # PROCESSAR A DOENÇA
 

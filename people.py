@@ -86,7 +86,7 @@ def vision_scan(per):
 
         un = (1 / norm(scan_array)) * scan_array
         for p in range(1, per["visionRange"]+1):
-            point1 = per["pos"] + p * un
+            point1 = per["pos"] + round_array(p * un)
             lim_points.append(point1)
 
     return lim_points

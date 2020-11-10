@@ -19,7 +19,7 @@ canvas.pack()
 
 people = []
 
-per1 = create_person([10, 10])
+per1 = create_person([100, 100])
 
 people.append((per1, canvas.create_oval(*per1["circle"], fill="blue")))
 
@@ -38,24 +38,23 @@ for _ in range(1000):
     for person in people:
         per_data, per_canvas = person
         pixels_vision = process(per_data)
-        print(pixels_vision, per_data["pos"])
 
         if len(vision_pix):
             for pix in vision_pix:
                 canvas.delete(pix)
             vision_pix = []
             for pix in pixels_vision:
-                vision_pix.append(canvas.create_rectangle(pix[1], pix[0], pix[1]+3, pix[0]+3, fill="red"))
+                vision_pix.append(canvas.create_rectangle(pix[1], pix[0], pix[1]+3, pix[0]+3, fill="red", width=0))
 
         elif not len(vision_pix):
             for pix in pixels_vision:
-                vision_pix.append(canvas.create_rectangle(pix[1], pix[0], pix[1]+1, pix[0]+1, fill="red"))
+                vision_pix.append(canvas.create_rectangle(pix[1], pix[0], pix[1]+1, pix[0]+1, fill="red", width=0))
 
         # Atualizar canvas
         # vel = (per_data["vel"][1], per_data["vel"][0]))
         canvas.move(per_canvas, per_data["vel"][1], per_data["vel"][0])
 
     canvas.update()
-    sleep(1)
+    sleep(.1)
 
 root.mainloop()

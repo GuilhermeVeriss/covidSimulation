@@ -23,9 +23,9 @@ def create_person(pos):
     person = {
         "pos": array(pos),
         "vel": array([1, 0]),
-        "size": .3,
+        "size": 2,
         "place": "",
-        "visionRange": 7.5,
+        "visionRange": 25,
         "visionAngle": (2/3)*pi
     }
     person["circle"] = list(map(lambda i: to_pixel(i), [pos[1]-person["size"], pos[0]-person["size"],
@@ -47,13 +47,12 @@ def process(per):
 
     # Visão
 
-
     # ------------------------------------------------
     # Forças
 
     f_forward = array([0, 0])
 
-    f_wall = array([1, 2])
+    f_wall = array([0.2, 0.1])
 
     f_person = array([0, 0])
 
@@ -76,11 +75,21 @@ def process(per):
 
 def vision_scan(per):
     vision_array = (per["visionRange"]/norm(per["vel"]))*per["vel"]
-    start = per["pos"] + rotate(-pi/3).dot(vision_array)
-    end = per["pos"] + rotate(pi/3).dot(vision_array)
+    start = round_array(rotate(-pi/3).dot(vision_array))
 
-    start = round_array(start)
-    end = round_array(end)
-    return [start, end]
+    lim_points = []
+    for i in range(round((2/3)*pi*per["visionRange"])+1):
+        ang = i*(1/per["visionRange"])
+        scan_array = round_array(rotate(ang).dot(start))
+        point = per["pos"] + scan_array
+        lim_points.append(point)
+
+        un = (1 / norm(scan_array)) * scan_array
+        for p in range(1, per["visionRange"]+1):
+            point1 = per["pos"] + p * un
+            lim_points.append(point1)
+
+    return lim_points
+
 
 

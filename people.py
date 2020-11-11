@@ -52,9 +52,8 @@ def process(per):
     # Rotas
 
     # Visão
-    x = vision_scan(per)  # lista para gerar desenho (mudar depois)
+    obstacles = vision_scan(per)  # wall, people
 
-    obstacles = x[1]  # wall, people
     # ------------------------------------------------
     # Forças
 
@@ -80,7 +79,7 @@ def process(per):
 
     # Apagar depois, é só pra construir o campo de visão
 
-    return x[0]
+    # return x[0]
 
     # PROCESSAR A DOENÇA
 
@@ -90,7 +89,7 @@ def vision_scan(per):
         per["vision"] = (per["visionRange"]/norm(per["vel"]))*per["vel"]
     start = round_array(rotate(-pi/3).dot(per["vision"]))
 
-    lim_points = []
+    # lim_points = []
 
     wall_p = []  # lista dos pontos de uma parede
 
@@ -107,7 +106,7 @@ def vision_scan(per):
                 wall_p.append(point)
                 continue
 
-            lim_points.append(point)
+            # lim_points.append(point)
 
     wall_array = False
     wall_act = False
@@ -118,4 +117,5 @@ def vision_scan(per):
 
     obstacles = {"wall": (wall_array, wall_act), "people": 0}
 
-    return lim_points, obstacles
+    # return lim_points, obstacles
+    return obstacles

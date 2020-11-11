@@ -5,7 +5,7 @@ def to_pixel(n):
 
 scale = 1   # pixel/metros (1 pixel vale quantos metros?)
 
-q_wall = 500
+q_wall = 100
 q_per = 1
 
 v = 1.4

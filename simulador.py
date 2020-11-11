@@ -34,7 +34,7 @@ for r in range(matrix_h):
 vision_pix = []
 
 # Processar as pessoas.
-for _ in range(1000):
+while True:
     for person in people:
         per_data, per_canvas = person
         pixels_vision = process(per_data)
@@ -51,10 +51,9 @@ for _ in range(1000):
                 vision_pix.append(canvas.create_rectangle(pix[1], pix[0], pix[1]+1, pix[0]+1, fill="red", width=0))
 
         # Atualizar canvas
-        # vel = (per_data["vel"][1], per_data["vel"][0]))
         canvas.move(per_canvas, per_data["vel"][1], per_data["vel"][0])
 
     canvas.update()
-    sleep(.1)
+    sleep(.01)
 
 root.mainloop()

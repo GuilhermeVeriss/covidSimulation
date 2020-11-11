@@ -23,12 +23,17 @@ def create_person(pos):
 
     person = {
         "pos": array(pos),
-        "vel": array([1, 0]),
-        "size": 5,
+        "vel": array([1, -1]),
+        "size": 2,
         "place": "",
         "visionRange": 8,
-        "visionAngle": (2/3)*pi
+        "visionAngle": (2/3)*pi,
+        "vision": array([0, -1])
     }
+
+    if person["vel"].any() != 0:
+        person["vision"] = (person["visionRange"]/norm(person["vel"]))*person["vel"]
+
     person["circle"] = list(map(lambda i: to_pixel(i), [pos[1]-person["size"], pos[0]-person["size"],
                                                         pos[1]+person["size"], pos[0]+person["size"]]))
 
@@ -47,7 +52,7 @@ def process(per):
     # Rotas
 
     # Visão
-    x = vision_scan(per) # lista para gerar desenho (mudar depois)
+    x = vision_scan(per)  # lista para gerar desenho (mudar depois)
 
     obstacles = x[1]  # wall, people
     # ------------------------------------------------
@@ -58,10 +63,9 @@ def process(per):
     # Parede
     f_wall = array([0, 0])
     if obstacles["wall"][1]:
-        per_wall = per["pos"] - obstacles["wall"][0]
+        per_wall = obstacles["wall"][0] - per["pos"]
         f_wall = -round_array((q_wall*per_wall) / (norm(per_wall)**4))
 
-    print(f_wall)
     f_person = array([0, 0])
 
     f_all = f_forward + f_wall + f_person
@@ -82,8 +86,9 @@ def process(per):
 
 
 def vision_scan(per):
-    vision_array = (per["visionRange"]/norm(per["vel"]))*per["vel"]
-    start = round_array(rotate(-pi/3).dot(vision_array))
+    if per["vel"].any() != 0:
+        per["vision"] = (per["visionRange"]/norm(per["vel"]))*per["vel"]
+    start = round_array(rotate(-pi/3).dot(per["vision"]))
 
     lim_points = []
 

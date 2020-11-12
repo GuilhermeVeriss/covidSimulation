@@ -1,13 +1,16 @@
 from data import *
-from numpy import array, matrix
+from numpy import array, zeros
 from numpy.linalg import norm
 from pickle import load
 from math import pi, sin, cos
+from copy import deepcopy
 
 
 font = open("ambiente.xml", "rb")
 regions, matrix_env = load(font).values()
 wall = regions["parede"]
+
+matrix_people = zeros((len(matrix_env), len(matrix_env[0])), dtype=int)
 
 
 def rotate(ang):
@@ -35,6 +38,7 @@ def create_person(pos):
     if person["vel"].any() != 0:
         person["vision"] = (person["visionRange"]/norm(person["vel"]))*person["vel"]
 
+    matrix_people[person["pos"][0]][person["pos"][1]] = 1
     person["circle"] = list(map(lambda i: to_pixel(i), [pos[1]-person["size"], pos[0]-person["size"],
                                                         pos[1]+person["size"], pos[0]+person["size"]]))
 
@@ -70,12 +74,14 @@ def process(per):
 
     f_person = array([0, 0])
     people = obstacles["people"]
-    if not len(people):
+
+    print("new", "-"*50)
+    if len(people):
         for p in people:
             per_per = p - per["pos"]
             cos_ang = (per["vision"] * per_per) / (norm(per["vision"]) * norm(per_per))
-            f_person += (-q_per*per_per*cos_ang) / (norm(per_per)**2)
-
+            f_person = f_person + (-q_per*per_per*cos_ang) / (norm(per_per)**2)
+            print(f_person)
 
     f_all = f_forward + f_wall + f_person
 
@@ -85,14 +91,13 @@ def process(per):
         per["vel"] = round_array(v*(f_all/norm(f_all)) + per["vel"])
 
     # Nova posição
-    matrix_env[per["pos"][0]][per["pos"][1]] = regions[per["place"]]
+    matrix_people[per["pos"][0]][per["pos"][1]] = 0
 
     per["pos"] = per["pos"] + per["vel"]
     update_local(per)
 
-    matrix_env[per["pos"][0]][per["pos"][1]] = "p"
+    matrix_people[per["pos"][0]][per["pos"][1]] = 1
 
-    print(per["pos"])
     # return x[0]
 
     # PROCESSAR A DOENÇA
@@ -105,7 +110,7 @@ def vision_scan(per):
 
     # lim_points = []
 
-    wall_p = [] # lista dos pontos de uma parede
+    wall_p = []  # lista dos pontos de uma parede
     people_p = []
 
     for i in range(round((2/3)*pi*per["visionRange"])+1):
@@ -121,8 +126,10 @@ def vision_scan(per):
                 wall_p.append(point)
                 continue
 
-            elif matrix_env[point[0]][point[1]] == "p":
-                people_p.append(point)
+            elif matrix_people[point[0]][point[1]]:
+                if not any(p.all() == point.all() for p in people_p):
+                    people_p.append(point)
+
 
             # lim_points.append(point)
 
@@ -134,6 +141,5 @@ def vision_scan(per):
         wall_act = True
 
     obstacles = {"wall": (wall_array, wall_act), "people": people_p}
-
     # return lim_points, obstacles
     return obstacles

@@ -40,6 +40,8 @@ for r in range(matrix_h):
 
 """Processar as pessoas"""
 while True:
+    print("/-"*250)
+
     for person in people:
         per_data, per_canvas = person
         process(per_data)
@@ -60,6 +62,6 @@ while True:
         canvas.move(per_canvas, per_data["vel"][1], per_data["vel"][0])
 
     canvas.update()
-    sleep(.01)
+    sleep(0.1)
 
 root.mainloop()

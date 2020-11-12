@@ -20,8 +20,13 @@ canvas.pack()
 people = []
 
 per1 = create_person([100, 100])
+per2 = create_person([120, 110])
+# per3 = create_person([120, 110])
+
 
 people.append((per1, canvas.create_oval(*per1["circle"], fill="blue")))
+people.append((per2, canvas.create_oval(*per2["circle"], fill="blue")))
+# people.append((per3, canvas.create_oval(*per3["circle"], fill="blue")))
 
 
 """Gera os elementos da Canvas"""

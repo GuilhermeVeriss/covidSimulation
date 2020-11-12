@@ -31,6 +31,7 @@ def create_person(pos):
         "vision": array([0, -1])
     }
 
+    update_local(person)
     if person["vel"].any() != 0:
         person["vision"] = (person["visionRange"]/norm(person["vel"]))*person["vel"]
 
@@ -65,7 +66,16 @@ def process(per):
         per_wall = obstacles["wall"][0] - per["pos"]
         f_wall = -round_array((q_wall*per_wall) / (norm(per_wall)**4))
 
+    # Pessoas
+
     f_person = array([0, 0])
+    people = obstacles["people"]
+    if not len(people):
+        for p in people:
+            per_per = p - per["pos"]
+            cos_ang = (per["vision"] * per_per) / (norm(per["vision"]) * norm(per_per))
+            f_person += (-q_per*per_per*cos_ang) / (norm(per_per)**2)
+
 
     f_all = f_forward + f_wall + f_person
 
@@ -75,10 +85,14 @@ def process(per):
         per["vel"] = round_array(v*(f_all/norm(f_all)) + per["vel"])
 
     # Nova posição
+    matrix_env[per["pos"][0]][per["pos"][1]] = regions[per["place"]]
+
     per["pos"] = per["pos"] + per["vel"]
+    update_local(per)
 
-    # Apagar depois, é só pra construir o campo de visão
+    matrix_env[per["pos"][0]][per["pos"][1]] = "p"
 
+    print(per["pos"])
     # return x[0]
 
     # PROCESSAR A DOENÇA
@@ -91,7 +105,8 @@ def vision_scan(per):
 
     # lim_points = []
 
-    wall_p = []  # lista dos pontos de uma parede
+    wall_p = [] # lista dos pontos de uma parede
+    people_p = []
 
     for i in range(round((2/3)*pi*per["visionRange"])+1):
         ang = i*(1/per["visionRange"])
@@ -106,6 +121,9 @@ def vision_scan(per):
                 wall_p.append(point)
                 continue
 
+            elif matrix_env[point[0]][point[1]] == "p":
+                people_p.append(point)
+
             # lim_points.append(point)
 
     wall_array = False
@@ -115,7 +133,7 @@ def vision_scan(per):
         wall_array = wall_p[distances.index(min(distances))]
         wall_act = True
 
-    obstacles = {"wall": (wall_array, wall_act), "people": 0}
+    obstacles = {"wall": (wall_array, wall_act), "people": people_p}
 
     # return lim_points, obstacles
     return obstacles

@@ -29,12 +29,15 @@ def create_person(pos):
         "vel": array([1, -1]),
         "size": 2,
         "place": "",
-        "visionRange": 8,
+        "visionRange": 10,
         "visionAngle": (2/3)*pi,
         "vision": array([0, -1])
     }
 
     update_local(person)
+
+    person["vision"] = (person["visionRange"]/norm(person["vel"]))*person["vision"]
+
     if person["vel"].any() != 0:
         person["vision"] = (person["visionRange"]/norm(person["vel"]))*person["vel"]
 
@@ -68,27 +71,26 @@ def process(per):
     f_wall = array([0, 0])
     if obstacles["wall"][1]:
         per_wall = obstacles["wall"][0] - per["pos"]
-        f_wall = -round_array((q_wall*per_wall) / (norm(per_wall)**4))
+        f_wall = -(q_wall*per_wall) / (norm(per_wall)**4)
 
     # Pessoas
 
     f_person = array([0, 0])
     people = obstacles["people"]
 
-    print("new", "-"*50)
     if len(people):
         for p in people:
             per_per = p - per["pos"]
             cos_ang = (per["vision"] * per_per) / (norm(per["vision"]) * norm(per_per))
             f_person = f_person + (-q_per*per_per*cos_ang) / (norm(per_per)**2)
-            print(f_person)
 
+    # Total
     f_all = f_forward + f_wall + f_person
 
     # -------------------------------------------------
     # Nova velocidade
     if norm(f_all) != 0:
-        per["vel"] = round_array(v*(f_all/norm(f_all)) + per["vel"])
+        per["vel"] = round_array((1/2)*(v*(f_all/norm(f_all)) + per["vel"]))
 
     # Nova posição
     matrix_people[per["pos"][0]][per["pos"][1]] = 0

@@ -19,7 +19,7 @@ def input_colors():
         for r1 in range(mat_height):
             for c1 in range(mat_width):
                 if matrix_res[r1][c1] == color_code[hex_color]:
-                    canvas.itemconfig(pixels[r1][c1], fill="white")
+                    canvas.itemconfig(pixels[r1][c1], fill=color_highlight)
 
         while True:
             name = simpledialog.askstring("Inserir nome", "Insira o nome da região")
@@ -34,8 +34,10 @@ def input_colors():
                     canvas.itemconfig(pixels[r1][c1], fill=hex_color)
 
 
-imgName = "imagens/planta_casa_cores.png"
+imgName = "imagens/planta_casa_cores_wayp.png"
 save_data = ""
+
+color_highlight = "blue"
 
 
 imgTestJpg = Image.open(imgName)
@@ -90,3 +92,6 @@ env = {"regions": regions, "matrix": matrix_res}
 fontText = open(save_data, "wb")
 dump(env, fontText)
 fontText.close()
+
+
+

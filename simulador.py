@@ -1,6 +1,6 @@
-from pickle import load
 from tkinter import *
 from people import *
+from pickle import load
 from time import sleep
 
 
@@ -19,14 +19,14 @@ canvas.pack()
 
 people = []
 
-per1 = create_person([100, 100])
+per1 = create_person([90, 100])
 per2 = create_person([120, 110])
-# per3 = create_person([120, 110])
+per3 = create_person([130, 110])
 
 
 people.append((per1, canvas.create_oval(*per1["circle"], fill="blue")))
 people.append((per2, canvas.create_oval(*per2["circle"], fill="blue")))
-# people.append((per3, canvas.create_oval(*per3["circle"], fill="blue")))
+people.append((per3, canvas.create_oval(*per3["circle"], fill="blue")))
 
 
 """Gera os elementos da Canvas"""
@@ -40,7 +40,7 @@ for r in range(matrix_h):
 
 """Processar as pessoas"""
 while True:
-    print("/-"*250)
+    print("+-"*250)
 
     for person in people:
         per_data, per_canvas = person
@@ -62,6 +62,6 @@ while True:
         canvas.move(per_canvas, per_data["vel"][1], per_data["vel"][0])
 
     canvas.update()
-    sleep(0.1)
+    sleep(0.01)
 
 root.mainloop()

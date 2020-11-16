@@ -16,16 +16,25 @@ def input_colors():
     for hex_color in color_code:
         color_show.configure(bg=hex_color)
 
+        # Marcar posicão da região
+        limits = []
+        current = ()
         for r1 in range(mat_height):
             for c1 in range(mat_width):
                 if matrix_res[r1][c1] == color_code[hex_color]:
+                    current = (r1, c1)
+                    if not len(limits):
+                        limits.append(current)
                     canvas.itemconfig(pixels[r1][c1], fill=color_highlight)
+        limits.append(current)
 
         while True:
             name = simpledialog.askstring("Inserir nome", "Insira o nome da região")
             if name:
                 regions[name] = color_code[hex_color]
+                positions[name] = limits
                 print(regions)
+                print(positions)
                 break
 
         for r1 in range(mat_height):
@@ -34,10 +43,10 @@ def input_colors():
                     canvas.itemconfig(pixels[r1][c1], fill=hex_color)
 
 
-imgName = "imagens/planta_casa_cores_wayp.png"
-save_data = ""
+imgName = "imagens/planta_casa_cores.png"
+save_data = "ambiente2.xml"
 
-color_highlight = "blue"
+color_highlight = "white"
 
 
 imgTestJpg = Image.open(imgName)
@@ -53,8 +62,10 @@ mat_height = len(matrix_res)
 pixels = list(deepcopy(imgArray))
 pixels = list(map(lambda x: list(x), pixels))
 
+
 color_code = {}
 regions = {}
+positions = {}
 
 
 root = Tk()
@@ -87,11 +98,8 @@ for r in range(mat_height):
 
 root.mainloop()
 
-env = {"regions": regions, "matrix": matrix_res}
+env = {"regions": regions, "matrix": matrix_res, "positions": positions}
 
 fontText = open(save_data, "wb")
 dump(env, fontText)
 fontText.close()
-
-
-

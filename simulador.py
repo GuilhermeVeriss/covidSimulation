@@ -36,7 +36,6 @@ for r in range(matrix_h):
             canvas.create_rectangle(c, r, c+1, r+1, fill="black")
 
 
-# vision_pix = []
 
 """Processar as pessoas"""
 while True:
@@ -45,18 +44,6 @@ while True:
     for person in people:
         per_data, per_canvas = person
         process(per_data)
-
-        # vision_pix = process(per_data)
-        # if len(vision_pix):
-        #     for pix in vision_pix:
-        #         canvas.delete(pix)
-        #     vision_pix = []
-        #     for pix in pixels_vision:
-        #         vision_pix.append(canvas.create_rectangle(pix[1], pix[0], pix[1]+3, pix[0]+3, fill="red", width=0))
-        #
-        # elif not len(vision_pix):
-        #     for pix in pixels_vision:
-        #         vision_pix.append(canvas.create_rectangle(pix[1], pix[0], pix[1]+1, pix[0]+1, fill="red", width=0))
 
         """Atualizar canvas"""
         canvas.move(per_canvas, per_data["vel"][1], per_data["vel"][0])

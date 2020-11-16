@@ -3,7 +3,6 @@ from numpy import array, zeros
 from numpy.linalg import norm
 from pickle import load
 from math import pi, sin, cos
-from copy import deepcopy
 
 
 font = open("ambiente.xml", "rb")
@@ -133,8 +132,6 @@ def vision_scan(per):
                     people_p.append(point)
 
 
-            # lim_points.append(point)
-
     wall_array = False
     wall_act = False
     if wall_p:
@@ -143,5 +140,4 @@ def vision_scan(per):
         wall_act = True
 
     obstacles = {"wall": (wall_array, wall_act), "people": people_p}
-    # return lim_points, obstacles
     return obstacles

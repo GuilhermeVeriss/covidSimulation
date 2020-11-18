@@ -58,7 +58,7 @@ def process(per):
     # PROCESSAR A MECÂNICA
 
     # Rotas
-    route = find_route(per, "a8")
+    route = find_route(per, "a4")
 
     # Visão
     obstacles = vision_scan(per)  # wall, people

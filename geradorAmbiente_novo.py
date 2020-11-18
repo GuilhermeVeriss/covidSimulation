@@ -43,10 +43,10 @@ def input_colors():
                     canvas.itemconfig(pixels[r1][c1], fill=hex_color)
 
 
-imgName = "imagens/planta_casa_cores.png"
-save_data = "ambiente2.xml"
+imgName = ""
+save_data = ""
 
-color_highlight = "white"
+color_highlight = "blue"
 
 
 imgTestJpg = Image.open(imgName)

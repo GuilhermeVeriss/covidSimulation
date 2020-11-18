@@ -1,12 +1,13 @@
 from data import *
+from rota import *
 from numpy import array, zeros
 from numpy.linalg import norm
 from pickle import load
 from math import pi, sin, cos
 
 
-font = open("ambiente.xml", "rb")
-regions, matrix_env = load(font).values()
+font = open("ambiente2.xml", "rb")
+regions, matrix_env, positions = load(font).values()
 wall = regions["parede"]
 
 matrix_people = zeros((len(matrix_env), len(matrix_env[0])), dtype=int)
@@ -57,6 +58,7 @@ def process(per):
     # PROCESSAR A MECÂNICA
 
     # Rotas
+    route = find_route(per, "a8")
 
     # Visão
     obstacles = vision_scan(per)  # wall, people

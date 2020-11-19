@@ -1,6 +1,7 @@
 from pickle import load
 from numpy import array
 from numpy.linalg import norm
+from data import round_array
 
 font1 = open("grafos.xml", "rb")
 forks, way_con = load(font1).values()
@@ -60,9 +61,11 @@ def find_route(person, destination):
         sort(open_list)
         analyze = list(open_list.values())[0]
 
-    route = []
+    route = {destination: round_array(destination_p)}
     item = analyze
+
     while item["father"]:
-        route.append(item["name"])
+        route[item["name"]] = round_array(middle_p(positions[item["name"]]))
         item = item["father"]
-    print(route)
+
+    return route

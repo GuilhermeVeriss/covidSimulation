@@ -3,7 +3,7 @@ from rota import *
 from numpy import array, zeros
 from numpy.linalg import norm
 from pickle import load
-from math import pi, sin, cos
+from math import pi
 
 
 font = open("ambiente2.xml", "rb")
@@ -11,15 +11,6 @@ regions, matrix_env, positions = load(font).values()
 wall = regions["parede"]
 
 matrix_people = zeros((len(matrix_env), len(matrix_env[0])), dtype=int)
-
-
-def rotate(ang):
-    """Retorna matriz de rotação a partir de determinado ângulo"""
-    return array([[cos(ang), sin(ang)], [-sin(ang), cos(ang)]])
-
-
-def round_array(vec):
-    return array([round(vec[0]), round(vec[1])])
 
 
 def create_person(pos):
@@ -57,8 +48,13 @@ def update_local(per):
 def process(per):
     # PROCESSAR A MECÂNICA
 
-    # Rotas
-    route = find_route(per, "a4")
+    # Destino
+    if per["route"]:
+        d = 10  # distância do destino
+        if norm(list(per["route"].values())[-1] - per["pos"]) <= d:
+            per["route"].pop(list(per["route"].keys())[-1])
+
+    # route = find_route(per, "a4")
 
     # Visão
     obstacles = vision_scan(per)  # wall, people
@@ -66,7 +62,21 @@ def process(per):
     # ------------------------------------------------
     # Forças
 
-    f_forward = array([0, 0])
+    # Forward
+    f1 = array([0, 0])
+    f2 = array([0, 0])
+    if per["route"]:
+        current_point = list(per["route"].values())[-1]
+        per_des = current_point - per["pos"]
+        f1 = per_des/norm(per_des)
+
+    if len(per["route"]) >= 2:
+        current_point2 = list(per["route"].values())[-2]
+        per_des2 = current_point2 - per["pos"]
+        f2 = per_des2 / norm(per_des2)
+        f2 = (1/2) * f2
+
+    f_forward = (f1 + f2)/norm(f1 + f2)
 
     # Parede
     f_wall = array([0, 0])

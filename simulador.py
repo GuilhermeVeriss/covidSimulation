@@ -2,6 +2,7 @@ from tkinter import *
 from people import *
 from pickle import load
 from time import sleep
+from rota import find_route
 
 
 font = open("ambiente2.xml", "rb")
@@ -22,6 +23,8 @@ people = []
 per1 = create_person([90, 100])
 # per2 = create_person([120, 110])
 # per3 = create_person([130, 110])
+per1["route"] = find_route(per1, "a3")
+print(per1["route"])
 
 
 people.append((per1, canvas.create_oval(*per1["circle"], fill="blue")))
